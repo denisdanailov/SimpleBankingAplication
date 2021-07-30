@@ -1,49 +1,47 @@
 package FunctionalProgramming_Exercise;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Scanner;
+import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class AppliedArithmetic {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
 
-        List<Integer> numbers = Arrays.stream(scanner.nextLine().split("\\s+")).mapToInt(Integer::parseInt)
-                .boxed()
-                .collect(Collectors.toList());
+        //"add" -> adds 1; приемам масив, връщам масив
+        Function<int[], int[]> add = array -> Arrays.stream(array).map(e -> e += 1).toArray();
+        // "multiply" -> multiplies by 2; приемам масив, променям масив
+        Function<int[], int[]> multiply = array -> Arrays.stream(array).map(e -> e *= 2).toArray();
+        // "subtract" -> subtracts 1;
+        Function<int[], int[]> subtract = array -> Arrays.stream(array).map(e -> e -= 1).toArray();
+        // "print" -> prints; приема масив -> печата
+        Consumer<int[]> print = array -> Arrays.stream(array).forEach(e -> System.out.print(e + " "));
 
 
-
+        int [] numbers = Arrays.stream(scanner.nextLine().split("\\s+")).mapToInt(Integer::parseInt).toArray();
         String command = scanner.nextLine();
-        while (!command.equalsIgnoreCase("end")) {
 
-            if(command.equalsIgnoreCase("print")) {
-                numbers.forEach(e -> System.out.println(e + " "));
-            } else {
-                numbers = mathOperations(command, numbers);
+        while(!command.equals("end")) {
+            //add, multiply, subtract, print
+            switch(command) {
+                case "add":
+                    numbers = add.apply(numbers);
+                    break;
+                case "multiply":
+                    numbers = multiply.apply(numbers);
+                    break;
+                case "subtract":
+                    numbers = subtract.apply(numbers);
+                    break;
+                case "print":
+                    print.accept(numbers);
+                    System.out.println();
+                    break;
             }
-
             command = scanner.nextLine();
         }
-    }
-    public static List<Integer> mathOperations(String command, List<Integer> numbers) {
-        Function<List<Integer>, List<Integer>> function = list -> {
-            for (int i = 0; i < list.size() ; i++) {
-                if (command.equalsIgnoreCase("add")) {
-                    list.set(i,list.get(i) + 1);
-                } else if (command.equalsIgnoreCase("multiply")) {
-                    list.set(i, list.get(i) * 2);
-                } else if (command.equalsIgnoreCase("subtract")) {
-                    list.set(i, list.get(i) - 1);
-                }
-             }
-            return list;
-        };
-
-        return function.apply(numbers);
 
     }
 }
